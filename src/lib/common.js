@@ -1,15 +1,6 @@
 import axios from 'axios';
 import { API_ROUTES } from '../utils/constants';
 
-function formatBooks(bookArray) {
-  return bookArray.map((book) => {
-    const newBook = { ...book };
-    // eslint-disable-next-line no-underscore-dangle
-    newBook.id = newBook._id;
-    return newBook;
-  });
-}
-
 export function storeInLocalStorage(token, userId) {
   localStorage.setItem('token', token);
   localStorage.setItem('userId', userId);
@@ -40,8 +31,7 @@ export async function getBooks() {
       method: 'GET',
       url: `${API_ROUTES.BOOKS}`,
     });
-    // eslint-disable-next-line array-callback-return
-    const books = formatBooks(response.data);
+    const books = response.data;
     return books;
   } catch (err) {
     console.error(err);
@@ -56,7 +46,6 @@ export async function getBook(id) {
       url: `${API_ROUTES.BOOKS}/${id}`,
     });
     const book = response.data;
-    // eslint-disable-next-line no-underscore-dangle
     book.id = book._id;
     return book;
   } catch (err) {
@@ -71,7 +60,7 @@ export async function getBestRatedBooks() {
       method: 'GET',
       url: `${API_ROUTES.BEST_RATED}`,
     });
-    return formatBooks(response.data);
+    return response.data;
   } catch (e) {
     console.error(e);
     return [];
@@ -104,7 +93,6 @@ export async function rateBook(id, userId, rating) {
       },
     });
     const book = response.data;
-    // eslint-disable-next-line no-underscore-dangle
     book.id = book._id;
     return book;
   } catch (e) {
@@ -157,7 +145,6 @@ export async function updateBook(data, id) {
     year: data.year,
     genre: data.genre,
   };
-  console.log(data.file[0]);
   if (data.file[0]) {
     newData = new FormData();
     newData.append('book', JSON.stringify(book));

@@ -1,15 +1,24 @@
 const express = require('express');
 const router = express.Router();
+const Book = require('../models/Book');
 
-// Route GET pour les livres
-router.get('/', (req, res) => {
-  res.json({ message: 'Liste des livres' });
+router.get('/', async (req, res) => {
+  try {
+    const books = await Book.find({});
+    res.json(books);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
-// Route POST pour ajouter un nouveau livre
-router.post('/', (req, res) => {
-  const newBook = req.body;
-  res.status(201).json({ message: 'Livre ajouté', book: newBook });
+router.post('/', async (req, res) => {
+  const newBook = new Book(req.body);
+  try {
+    await newBook.save();
+    res.status(201).json({ message: 'Livre ajouté', book: newBook });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
 });
 
 module.exports = router;

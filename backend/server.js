@@ -10,7 +10,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
+console.log('Connecting to MongoDB URI:', process.env.MONGODB_URI);
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -20,17 +21,10 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('MongoDB connection error:', error);
 });
 
-// Middleware de route (vous pouvez les séparer dans des fichiers distincts dans le dossier `routes`)
-app.get('/', (req, res) => {
-  res.send('Hello, World!');
-});
-
-// Vérifiez le chemin du fichier books.js
 const booksPath = path.resolve(__dirname, './src/routes/books.js');
 console.log('Books path:', booksPath);
 console.log('Books path exists:', require('fs').existsSync(booksPath));
 
-// Exemple de route pour les livres
 app.use('/api/books', require(booksPath));
 
 app.listen(port, () => {

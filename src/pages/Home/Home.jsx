@@ -6,10 +6,10 @@ import styles from './Home.module.css';
 import { getBooks } from '../../lib/common';
 
 function Home() {
-  const [books, setBooks] = useState(null);
+  const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  // eslint-disable-next-line max-len
-  const displayBooks = () => (books ? books.map((book) => <BookItem size={2} book={book} key={book.id} />) : <h1>Vide</h1>);
+
+  const displayBooks = () => (books.length > 0 ? books.map((book) => <BookItem size={2} book={book} key={book._id} />) : <h1>Vide</h1>);
 
   useEffect(() => {
     async function getBooksList() {
@@ -21,7 +21,9 @@ function Home() {
     }
     getBooksList();
   }, []);
+
   const backgroundImageStyle = { backgroundImage: `url(${Banner})` };
+
   return (
     <div className={styles.Home}>
       <div className={styles.banner} style={backgroundImageStyle} />
@@ -35,9 +37,7 @@ function Home() {
           {loading ? <h1>Chargement</h1> : displayBooks()}
         </section>
       </main>
-
     </div>
-
   );
 }
 
