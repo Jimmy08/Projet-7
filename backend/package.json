@@ -1,0 +1,19 @@
+{
+  "name": "mon-vieux-grimoire-backend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^6.0.0",
+    "dotenv": "^16.0.0",
+    "cors": "^2.8.5"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "description": "Backend for Mon Vieux Grimoire",
+  "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
