@@ -4,19 +4,21 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const authRoutes = require('./src/routes/auth');
-const booksPath = path.resolve(__dirname, './src/routes/books.js');
+const bookRoutes = require('./src/routes/books');
+const authMiddleware = require('./src/middleware/auth');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 console.log('Connecting to MongoDB URI:', process.env.MONGODB_URI);
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 }).then(() => {
   console.log('Connected to MongoDB');
 }).catch((error) => {
@@ -24,7 +26,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/books', require(booksPath));
+app.use('/api/books', bookRoutes); // Allow public access to GET routes
+
+// Protect only POST, PUT, DELETE routes with authentication
+app.use('/api/books', authMiddleware, bookRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
