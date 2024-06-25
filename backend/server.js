@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const authRoutes = require('./src/routes/auth');
+const booksPath = path.resolve(__dirname, './src/routes/books.js');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,10 +23,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('MongoDB connection error:', error);
 });
 
-const booksPath = path.resolve(__dirname, './src/routes/books.js');
-console.log('Books path:', booksPath);
-console.log('Books path exists:', require('fs').existsSync(booksPath));
-
+app.use('/api/auth', authRoutes);
 app.use('/api/books', require(booksPath));
 
 app.listen(port, () => {

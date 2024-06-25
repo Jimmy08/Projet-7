@@ -14,6 +14,7 @@ function Home() {
   useEffect(() => {
     async function getBooksList() {
       const data = await getBooks();
+      console.log('Books in Home component:', data);
       if (data) {
         setBooks(data);
         setLoading(false);

@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "express": "^4.19.2",
-    "mongoose": "^6.0.0",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.0",
-    "cors": "^2.8.5"
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^6.0.0",
+    "mongoose-unique-validator": "^5.0.0"
   },
   "scripts": {
     "start": "node server.js"

@@ -27,14 +27,21 @@ export async function getAuthenticatedUser() {
 
 export async function getBooks() {
   try {
+    const token = getFromLocalStorage('token');
+    console.log('Fetching books from:', `${API_ROUTES.BOOKS}`);
+    console.log('Using token:', token);
     const response = await axios({
       method: 'GET',
       url: `${API_ROUTES.BOOKS}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
     const books = response.data;
+    console.log('Fetched books:', books);
     return books;
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching books:', err);
     return [];
   }
 }
@@ -44,12 +51,15 @@ export async function getBook(id) {
     const response = await axios({
       method: 'GET',
       url: `${API_ROUTES.BOOKS}/${id}`,
+      headers: {
+        Authorization: `Bearer ${getFromLocalStorage('token')}`,
+      },
     });
     const book = response.data;
     book.id = book._id;
     return book;
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching book:', err);
     return null;
   }
 }
@@ -59,10 +69,13 @@ export async function getBestRatedBooks() {
     const response = await axios({
       method: 'GET',
       url: `${API_ROUTES.BEST_RATED}`,
+      headers: {
+        Authorization: `Bearer ${getFromLocalStorage('token')}`,
+      },
     });
     return response.data;
   } catch (e) {
-    console.error(e);
+    console.error('Error fetching best rated books:', e);
     return [];
   }
 }
@@ -75,7 +88,7 @@ export async function deleteBook(id) {
     });
     return true;
   } catch (err) {
-    console.error(err);
+    console.error('Error deleting book:', err);
     return false;
   }
 }
@@ -96,7 +109,7 @@ export async function rateBook(id, userId, rating) {
     book.id = book._id;
     return book;
   } catch (e) {
-    console.error(e);
+    console.error('Error rating book:', e);
     return e.message;
   }
 }
@@ -129,7 +142,7 @@ export async function addBook(data) {
       },
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error adding book:', err);
     return { error: true, message: err.message };
   }
 }
@@ -164,7 +177,7 @@ export async function updateBook(data, id) {
     });
     return newBook;
   } catch (err) {
-    console.error(err);
+    console.error('Error updating book:', err);
     return { error: true, message: err.message };
   }
 }
