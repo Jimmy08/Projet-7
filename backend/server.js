@@ -26,10 +26,13 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/books', bookRoutes); // Allow public access to GET routes
+
+// Public routes for getting books
+app.use('/api/books', bookRoutes);
 
 // Protect only POST, PUT, DELETE routes with authentication
-app.use('/api/books', authMiddleware, bookRoutes);
+app.use(authMiddleware);
+app.use('/api/books', bookRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

@@ -79,6 +79,7 @@ export async function getBestRatedBooks() {
     return [];
   }
 }
+
 export async function deleteBook(id) {
   try {
     await axios.delete(`${API_ROUTES.BOOKS}/${id}`, {
@@ -116,6 +117,8 @@ export async function rateBook(id, userId, rating) {
 
 export async function addBook(data) {
   const userId = localStorage.getItem('userId');
+  const token = localStorage.getItem('token');
+  console.log('Token used for adding book:', token); // Ajout de log pour le token
   const book = {
     userId,
     title: data.title,
@@ -133,16 +136,18 @@ export async function addBook(data) {
   bodyFormData.append('image', data.file[0]);
 
   try {
-    return await axios({
+    const response = await axios({
       method: 'post',
       url: `${API_ROUTES.BOOKS}`,
       data: bodyFormData,
       headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
+        Authorization: `Bearer ${token}`,
       },
     });
+    console.log('Book added successfully:', response.data); // Ajout de log pour la réponse
+    return response.data;
   } catch (err) {
-    console.error('Error adding book:', err);
+    console.error('Error adding book:', err.response ? err.response.data : err.message);
     return { error: true, message: err.message };
   }
 }

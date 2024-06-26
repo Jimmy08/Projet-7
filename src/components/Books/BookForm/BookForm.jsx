@@ -48,6 +48,7 @@ function BookForm({ book, validate }) {
     if (!book) {
       if (!data.file[0]) {
         alert('Vous devez ajouter une image');
+        return;
       }
       if (!data.rating) {
         /* eslint-disable no-param-reassign */

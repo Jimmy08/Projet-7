@@ -7,22 +7,50 @@ const router = express.Router();
 
 router.post('/signup', async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = new User({ email: req.body.email, password: hashedPassword });
+    const { email, password } = req.body;
+    console.log('Received sign-up request:', email);
+
+    // Vérifier si l'utilisateur existe déjà
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already in use!' });
+    }
+
+    // Hacher le mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log('Hashed password created');
+
+    // Créer un nouvel utilisateur
+    const user = new User({ email, password: hashedPassword });
     await user.save();
-    res.status(201).json({ message: 'User created!' });
+    console.log('User created:', user);
+
+    return res.status(201).json({ message: 'User created!' });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.log('Error during sign-up:', error);
+    return res.status(500).json({ message: error.message });
   }
 });
 
 router.post('/login', async (req, res) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user || !await bcrypt.compare(req.body.password, user.password)) {
+    const { email, password } = req.body;
+
+    // Trouver l'utilisateur par email
+    const user = await User.findOne({ email });
+    if (!user) {
       return res.status(401).json({ message: 'Invalid credentials!' });
     }
-    const token = jwt.sign({ userId: user._id }, 'RANDOM_TOKEN_SECRET', { expiresIn: '24h' });
+
+    // Comparer les mots de passe
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid credentials!' });
+    }
+
+    // Générer un token JWT
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+
     return res.status(200).json({ userId: user._id, token });
   } catch (error) {
     return res.status(500).json({ message: error.message });
